@@ -13,6 +13,7 @@ struct {
 
 
 void init(void);
+void draw(void);
 void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
@@ -22,6 +23,9 @@ int
 main(void)
 {
     init();
+    draw();
+
+    sleep(1);
 
     return 0;
 }
@@ -41,6 +45,20 @@ init(void)
     write(STDOUT_FILENO, "\x1b[2J", 4);
     /* hide cursor */
     write(STDOUT_FILENO, "\x1b[?25l", 6);
+}
+
+
+void
+draw(void)
+{
+    char buf[32];
+    int len;
+
+    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", attributes.cy, attributes.cx);
+
+    write(STDOUT_FILENO, buf, len);
+
+    write(STDOUT_FILENO, "*", 1);
 }
 
 
