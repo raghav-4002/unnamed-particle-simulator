@@ -1,14 +1,18 @@
+#include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
 
 struct {
     struct termios orig_termios;
+    int screen_length, screen_width;
 } attributes;
 
 
 void init(void);
+void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
 
@@ -18,6 +22,8 @@ main(void)
 {
     init();
 
+    printf("Screen length: %d\r\n Screen width: %d\r\n", attributes.screen_length, attributes.screen_width);
+
     return 0;
 }
 
@@ -26,11 +32,24 @@ void
 init(void)
 {
     enable_raw_mode();
+    get_window_size();
 
     /* clear screen */
     write(STDOUT_FILENO, "\x1b[2J", 4);
     /* hide cursor */
     write(STDOUT_FILENO, "\x1b[?25l", 6);
+}
+
+
+void
+get_window_size(void)
+{
+    struct winsize ws;
+
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+
+    attributes.screen_length = ws.ws_row;
+    attributes.screen_width = ws.ws_col;
 }
 
 
