@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <time.h>
 
 
 struct {
@@ -14,6 +15,7 @@ struct {
 
 void init(void);
 void draw(void);
+void move(void);
 void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
@@ -23,9 +25,7 @@ int
 main(void)
 {
     init();
-    draw();
-
-    sleep(1);
+    move();
 
     return 0;
 }
@@ -39,10 +39,8 @@ init(void)
 
     /* initialize cursor position */
     attributes.cx = attributes.screen_width / 2;
-    attributes.cy = attributes.screen_length / 2;
+    attributes.cy = 0;
 
-    /* clear screen */
-    write(STDOUT_FILENO, "\x1b[2J", 4);
     /* hide cursor */
     write(STDOUT_FILENO, "\x1b[?25l", 6);
 }
@@ -51,6 +49,7 @@ init(void)
 void
 draw(void)
 {
+    write(STDOUT_FILENO, "\x1b[2J", 4);
     char buf[32];
     int len;
 
@@ -59,6 +58,19 @@ draw(void)
     write(STDOUT_FILENO, buf, len);
 
     write(STDOUT_FILENO, "*", 1);
+}
+
+
+void move(void)
+{
+    struct timespec ts = {0, 70000000};
+    struct timespec *rem = NULL;
+
+    while(attributes.cy != attributes.screen_length) {
+        attributes.cy++;
+        draw();
+        nanosleep(&ts, rem);
+    }
 }
 
 
