@@ -8,6 +8,7 @@ struct {
 } attributes;
 
 
+void init(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
 
@@ -15,9 +16,21 @@ void disable_raw_mode(void);
 int
 main(void)
 {
-    enable_raw_mode();
+    init();
 
     return 0;
+}
+
+
+void
+init(void)
+{
+    enable_raw_mode();
+
+    /* clear screen */
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+    /* hide cursor */
+    write(STDOUT_FILENO, "\x1b[?25l", 6);
 }
 
 
@@ -42,4 +55,7 @@ void
 disable_raw_mode(void)
 {
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &attributes.orig_termios);
+
+    /* unhide cursor */
+    write(STDOUT_FILENO, "\x1b[?25h", 6);
 }
