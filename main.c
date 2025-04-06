@@ -8,6 +8,7 @@
 struct {
     struct termios orig_termios;
     int screen_length, screen_width;
+    int cx, cy;
 } attributes;
 
 
@@ -22,8 +23,6 @@ main(void)
 {
     init();
 
-    printf("Screen length: %d\r\n Screen width: %d\r\n", attributes.screen_length, attributes.screen_width);
-
     return 0;
 }
 
@@ -33,6 +32,10 @@ init(void)
 {
     enable_raw_mode();
     get_window_size();
+
+    /* initialize cursor position */
+    attributes.cx = attributes.screen_width / 2;
+    attributes.cy = attributes.screen_length / 2;
 
     /* clear screen */
     write(STDOUT_FILENO, "\x1b[2J", 4);
