@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
-#include <time.h>
 
 
 struct {
@@ -17,10 +16,17 @@ typedef struct {
     int y;
 } Vector2;
 
+typedef struct {
+    Vector2 position;
+    Vector2 velocity;
+
+    char object[8];
+} Point;
+
 
 void init(void);
-void draw(Vector2 position);
-void move(void);
+void draw(Point *point);
+void move(Point *point);
 void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
@@ -31,9 +37,9 @@ main(void)
 {
     init();
 
-    Vector2 position = {attributes.screen_width / 2, 0};
+    Point point = {{attributes.screen_width / 2, 20}, {1, 0}, "/"};
 
-    draw(position);
+    move(&point);
 
     return 0;
 }
@@ -45,39 +51,36 @@ init(void)
     enable_raw_mode();
     get_window_size();
 
-    /* initialize cursor position */
-    attributes.cx = attributes.screen_width / 2;
-    attributes.cy = 0;
-
     /* hide cursor */
     write(STDOUT_FILENO, "\x1b[?25l", 6);
 }
 
 
 void
-draw(Vector2 position)
+draw(Point *point)
 {
     write(STDOUT_FILENO, "\x1b[2J", 4);
     char buf[32];
     int len;
 
-    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", position.y, position.x);
+    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", point->position.y, point->position.x);
 
     write(STDOUT_FILENO, buf, len);
 
-    write(STDOUT_FILENO, "*", 1);
+    write(STDOUT_FILENO, point->object, sizeof(point->object));
 }
 
 
-void move(void)
+void 
+move(Point *point)
 {
-    struct timespec ts = {0, 70000000};
-    struct timespec *rem = NULL;
+    while(1) {
+        point->position.x += point->velocity.x;
+        point->position.y += point->velocity.y;
 
-    while(attributes.cy != attributes.screen_length) {
-        attributes.cy++;
-        // draw();
-        nanosleep(&ts, rem);
+        draw(point);
+
+        sleep(1);
     }
 }
 
