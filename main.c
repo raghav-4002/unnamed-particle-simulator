@@ -12,9 +12,14 @@ struct {
     int cx, cy;
 } attributes;
 
+typedef struct {
+    int x;
+    int y;
+} Vector2;
+
 
 void init(void);
-void draw(void);
+void draw(Vector2 position);
 void move(void);
 void get_window_size(void);
 void enable_raw_mode(void);
@@ -25,7 +30,10 @@ int
 main(void)
 {
     init();
-    move();
+
+    Vector2 position = {attributes.screen_width / 2, 0};
+
+    draw(position);
 
     return 0;
 }
@@ -47,13 +55,13 @@ init(void)
 
 
 void
-draw(void)
+draw(Vector2 position)
 {
     write(STDOUT_FILENO, "\x1b[2J", 4);
     char buf[32];
     int len;
 
-    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", attributes.cy, attributes.cx);
+    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", position.y, position.x);
 
     write(STDOUT_FILENO, buf, len);
 
@@ -68,7 +76,7 @@ void move(void)
 
     while(attributes.cy != attributes.screen_length) {
         attributes.cy++;
-        draw();
+        // draw();
         nanosleep(&ts, rem);
     }
 }
