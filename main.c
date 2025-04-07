@@ -8,7 +8,6 @@
 struct {
     struct termios orig_termios;
     int screen_length, screen_width;
-    int cx, cy;
 } attributes;
 
 typedef struct {
