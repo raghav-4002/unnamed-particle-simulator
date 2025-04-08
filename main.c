@@ -6,21 +6,28 @@
 #include <time.h>
 
 
+/*
+ * for smoother experience only use values of velocity from 0 to 3
+ * And the values of accelaration from 0 to 1 (floats are ok)
+ */
 #define X_VELOCITY     0
 #define Y_VELOCITY     0
 
 #define X_ACCELARATION 0
 #define Y_ACCELARATION 0
 
-#define MASS 2.5
+#define MASS           2.5
 
-#define OBJECT "O"
+#define X_FORCE        0
+#define Y_FORCE        0
+
+#define OBJECT        "O"
 
 
 struct {
     struct termios orig_termios;
     int            screen_length, screen_width;
-} attributes;
+} term_attributes;
 
 typedef struct {
     float x;
@@ -30,15 +37,12 @@ typedef struct {
 typedef float Some_mass_unit_idk;
 
 typedef struct {
-    /*
-     * for smoother experience only use values of velocity from 0 to 3
-     * And the values of accelaration from 0 to 1 (floats are ok)
-     */
-    Vector2 position;
-    Vector2 velocity;
-    Vector2 accelaration;
+
     Some_mass_unit_idk mass;
-    char    symbol[8];
+    Vector2            position;
+    Vector2            velocity;
+    Vector2            accelaration;
+    char               symbol[8];
 } Point;
 
 
@@ -57,10 +61,11 @@ main(void)
 {
     init();
 
-    Point point = {{0, 0},            // position
-    {X_VELOCITY, Y_VELOCITY},         // velocity
-    {X_ACCELARATION, Y_ACCELARATION}, // accelaration
-    MASS, OBJECT};
+    Point point = {MASS,
+    {0, 0},
+    {X_VELOCITY, Y_VELOCITY},
+    {X_ACCELARATION, Y_ACCELARATION}, 
+    OBJECT};
 
     Vector2 force = {0.1, 0};
 
@@ -132,18 +137,18 @@ get_window_size(void)
 
     if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) kill("ioctl");
 
-    attributes.screen_length = ws.ws_row;
-    attributes.screen_width = ws.ws_col;
+    term_attributes.screen_length = ws.ws_row;
+    term_attributes.screen_width = ws.ws_col;
 }
 
 
 void
 enable_raw_mode(void)
 {
-    if(tcgetattr(STDIN_FILENO, &attributes.orig_termios) == -1) kill("tcgetattr");
+    if(tcgetattr(STDIN_FILENO, &term_attributes.orig_termios) == -1) kill("tcgetattr");
     atexit(disable_raw_mode);
 
-    struct termios raw = attributes.orig_termios;
+    struct termios raw = term_attributes.orig_termios;
 
     raw.c_lflag &= ~(ECHO | ICANON | ISIG | IEXTEN | CS8);
 	raw.c_iflag &= ~(IXON | ICRNL | BRKINT | INPCK | ISTRIP);
@@ -157,7 +162,8 @@ enable_raw_mode(void)
 void
 disable_raw_mode(void)
 {
-    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &attributes.orig_termios) == -1) kill("tcsetattr");
+    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_attributes.orig_termios) == -1) 
+        kill("tcsetattr");
 
     /* unhide cursor */
     write(STDOUT_FILENO, "\x1b[?25h", 6);
