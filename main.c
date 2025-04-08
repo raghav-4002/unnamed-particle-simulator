@@ -6,15 +6,28 @@
 #include <time.h>
 
 
+#define X_VELOCITY     0
+#define Y_VELOCITY     0
+
+#define X_ACCELARATION 0.1
+#define Y_ACCELARATION 0
+
+#define MASS 1
+
+#define OBJECT "O"
+
+
 struct {
     struct termios orig_termios;
-    int screen_length, screen_width;
+    int            screen_length, screen_width;
 } attributes;
 
 typedef struct {
     float x;
     float y;
 } Vector2;
+
+typedef unsigned Some_mass_unit_idk;
 
 typedef struct {
     /*
@@ -24,7 +37,8 @@ typedef struct {
     Vector2 position;
     Vector2 velocity;
     Vector2 accelaration;
-    char object[8];
+    Some_mass_unit_idk mass;
+    char    symbol[8];
 } Point;
 
 
@@ -42,7 +56,7 @@ main(void)
 {
     init();
 
-    Point point = {{0, 0}, {0, 0}, {0, 0.05}, "O"};
+    Point point = {{0, 0}, {X_VELOCITY, Y_VELOCITY}, {X_ACCELARATION, Y_ACCELARATION}, MASS, OBJECT};
 
     move(&point);
 
@@ -66,20 +80,20 @@ draw(Point *point)
 {
     write(STDOUT_FILENO, "\x1b[2J", 4);
     char buf[32];
-    int len;
+    int  len;
 
     len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (int)point->position.y, (int)point->position.x);
 
     write(STDOUT_FILENO, buf, len);
 
-    write(STDOUT_FILENO, point->object, sizeof(point->object));
+    write(STDOUT_FILENO, point->symbol, sizeof(point->symbol));
 }
 
 
 void 
 move(Point *point)
 {
-    struct timespec ts = {0, 63000000};
+    struct timespec  ts = {0, 63000000};
     struct timespec *n = NULL;
 
     while(1) {
