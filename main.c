@@ -19,7 +19,7 @@ typedef struct {
 typedef struct {
     Vector2 position;
     Vector2 velocity;
-
+    Vector2 accelaration;
     char object[8];
 } Point;
 
@@ -38,7 +38,7 @@ main(void)
 {
     init();
 
-    Point point = {{0, 0}, {1, 1}, "*"};
+    Point point = {{0, 0}, {0, 0}, {0, 1}, "*"};
 
     move(&point);
 
@@ -78,7 +78,9 @@ move(Point *point)
     struct timespec ts = {0, 63000000};
     struct timespec *n = NULL;
 
-    while(point->position.x != attributes.screen_width && point->position.y != attributes.screen_length) {
+    while(1) {
+        point->velocity.x += point->accelaration.x;
+        point->velocity.y += point->accelaration.y;
         point->position.x += point->velocity.x;
         point->position.y += point->velocity.y;
 
