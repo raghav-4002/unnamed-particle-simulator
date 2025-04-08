@@ -29,6 +29,7 @@ void move(Point *point);
 void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
+void kill(const char *message);
 
 
 int
@@ -89,7 +90,7 @@ get_window_size(void)
 {
     struct winsize ws;
 
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws);
+    if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1) kill("ioctl");
 
     attributes.screen_length = ws.ws_row;
     attributes.screen_width = ws.ws_col;
@@ -99,7 +100,7 @@ get_window_size(void)
 void
 enable_raw_mode(void)
 {
-    tcgetattr(STDIN_FILENO, &attributes.orig_termios);
+    if(tcgetattr(STDIN_FILENO, &attributes.orig_termios) == -1) kill("tcgetattr");
     atexit(disable_raw_mode);
 
     struct termios raw = attributes.orig_termios;
@@ -109,15 +110,24 @@ enable_raw_mode(void)
 	raw.c_oflag &= ~(OPOST);
 	raw.c_cflag |= (CS8);
 
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
+    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) kill("tcsetattr");
 }
 
 
 void
 disable_raw_mode(void)
 {
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &attributes.orig_termios);
+    if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &attributes.orig_termios) == -1) kill("tcsetattr");
 
     /* unhide cursor */
     write(STDOUT_FILENO, "\x1b[?25h", 6);
+}
+
+
+void
+kill(const char *message)
+{
+    perror(message);
+
+    exit(1);
 }
