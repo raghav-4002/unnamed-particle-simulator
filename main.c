@@ -12,11 +12,15 @@ struct {
 } attributes;
 
 typedef struct {
-    int x;
-    int y;
+    float x;
+    float y;
 } Vector2;
 
 typedef struct {
+    /*
+     * for smoother experience only use values of velocity from 0 to 3
+     * And the values of accelaration from 0 to 1 (floats are ok)
+     */
     Vector2 position;
     Vector2 velocity;
     Vector2 accelaration;
@@ -38,7 +42,7 @@ main(void)
 {
     init();
 
-    Point point = {{0, 0}, {0, 0}, {0, 1}, "*"};
+    Point point = {{0, 0}, {0, 0}, {0, 0.05}, "O"};
 
     move(&point);
 
@@ -64,7 +68,7 @@ draw(Point *point)
     char buf[32];
     int len;
 
-    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", point->position.y, point->position.x);
+    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (int)point->position.y, (int)point->position.x);
 
     write(STDOUT_FILENO, buf, len);
 
