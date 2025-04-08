@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#include <time.h>
 
 
 struct {
@@ -37,7 +38,7 @@ main(void)
 {
     init();
 
-    Point point = {{attributes.screen_width / 2, 20}, {1, 0}, "/"};
+    Point point = {{0, 0}, {1, 1}, "*"};
 
     move(&point);
 
@@ -74,13 +75,16 @@ draw(Point *point)
 void 
 move(Point *point)
 {
-    while(1) {
+    struct timespec ts = {0, 63000000};
+    struct timespec *n = NULL;
+
+    while(point->position.x != attributes.screen_width && point->position.y != attributes.screen_length) {
         point->position.x += point->velocity.x;
         point->position.y += point->velocity.y;
 
         draw(point);
 
-        sleep(1);
+        nanosleep(&ts, n);
     }
 }
 
