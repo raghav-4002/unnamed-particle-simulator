@@ -9,10 +9,10 @@
 #define X_VELOCITY     0
 #define Y_VELOCITY     0
 
-#define X_ACCELARATION 0.1
+#define X_ACCELARATION 0
 #define Y_ACCELARATION 0
 
-#define MASS 1
+#define MASS 2.5
 
 #define OBJECT "O"
 
@@ -27,7 +27,7 @@ typedef struct {
     float y;
 } Vector2;
 
-typedef unsigned Some_mass_unit_idk;
+typedef float Some_mass_unit_idk;
 
 typedef struct {
     /*
@@ -45,6 +45,7 @@ typedef struct {
 void init(void);
 void draw(Point *point);
 void move(Point *point);
+void apply_force(Point *point, Vector2 force);
 void get_window_size(void);
 void enable_raw_mode(void);
 void disable_raw_mode(void);
@@ -56,9 +57,14 @@ main(void)
 {
     init();
 
-    Point point = {{0, 0}, {X_VELOCITY, Y_VELOCITY}, {X_ACCELARATION, Y_ACCELARATION}, MASS, OBJECT};
+    Point point = {{0, 0},            // position
+    {X_VELOCITY, Y_VELOCITY},         // velocity
+    {X_ACCELARATION, Y_ACCELARATION}, // accelaration
+    MASS, OBJECT};
 
-    move(&point);
+    Vector2 force = {0.1, 0};
+
+    apply_force(&point, force);
 
     return 0;
 }
@@ -106,6 +112,16 @@ move(Point *point)
 
         nanosleep(&ts, n);
     }
+}
+
+
+void
+apply_force(Point *point, Vector2 force)
+{
+    point->accelaration.x = (force.x / point->mass);
+    point->accelaration.y = (force.y / point->mass);
+
+    move(point);
 }
 
 
