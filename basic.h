@@ -1,3 +1,7 @@
+#ifndef BASIC_H     /* header guard */
+#define BASIC_H
+
+
 #include <termios.h>
 
 
@@ -11,3 +15,6 @@ extern Attributes term_attributes;
 
 
 void initialize(void);
+
+
+#endif

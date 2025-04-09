@@ -56,7 +56,7 @@ get_window_size(void)
         kill("ioctl");
 
     term_attributes.screen_length = ws.ws_row;
-    term_attributes.screen_width = ws.ws_col;
+    term_attributes.screen_width  = ws.ws_col;
 }
 
 

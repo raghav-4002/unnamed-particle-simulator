@@ -1,4 +1,4 @@
 FLAGS = -Wpedantic -Wextra
 
 main: main.c
-	$(CC) main.c basic.c $(FLAGS)
+	$(CC) main.c basic.c physics.c $(FLAGS)

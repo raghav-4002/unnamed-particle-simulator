@@ -7,42 +7,44 @@
 #include "physics.h"
 
 
-#define SIZE 100
-
-Point particles[SIZE];
-
-
 void draw(Point *point);
-void move(void);
-void set_values(void);
+void move(Point particles[], unsigned size);
+void set_values(Point particles[], unsigned size);
 
 
 int
-main(void)
+main(int argc, char *argv[])
 {
+    if(argc == 1) {
+        printf("Usage: %s <number-of-particles>\n", argv[0]);
+        exit(1);
+    }
+
+    unsigned particle_count = atol(argv[1]);
+    Point particles[particle_count];
+
     srand(time(NULL));
     initialize();
 
-    set_values();
-
-    move();    
+    set_values(particles, particle_count);
+    move(particles, particle_count);    
 
     return 0;
 }
 
 
 void
-set_values(void)
+set_values(Point particles[], unsigned particle_count)
 {
-    for(int i = 0; i < SIZE; i++) {
-        particles[i].position.x = (rand() % term_attributes.screen_width) + 1;
-        particles[i].position.y = (rand() % term_attributes.screen_length) + 1;
+    for(unsigned i = 0; i < particle_count; i++) {
+        particles[i].position.x    = (rand() % term_attributes.screen_width) + 1;
+        particles[i].position.y    = (rand() % term_attributes.screen_length) + 1;
 
-        particles[i].velocity.x = 0;
-        particles[i].velocity.y = 0;
+        particles[i].velocity.x    = (rand() % 2) + 1;
+        particles[i].velocity.y    = (rand() % 2) + 1;
 
-        particles[i].accelaration.y = (((float)rand()) / RAND_MAX);
-        particles[i].accelaration.x = (((float)rand()) / RAND_MAX);
+        particles[i].accelaration.y = 0.00;
+        particles[i].accelaration.x = 0.00;
     }
 }
 
@@ -53,28 +55,20 @@ draw(Point *point)
     char buf[32];
     int  len;
 
-    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (int)point->position.y, (int)point->position.x);
+    len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", 
+            (int)point->position.y, (int)point->position.x);
 
     write(STDOUT_FILENO, buf, len);
-
     write(STDOUT_FILENO, "0", 1);
 
-    if(point->position.x >= term_attributes.screen_width || point->position.x <= 0) {
-        point->velocity.x *= -1;
-        point->accelaration.x *= -0.1;
-    }
-
-    if(point->position.y >= term_attributes.screen_length || point->position.y <= 0) {
-        point->velocity.y *= -1;
-        point->accelaration.y *= -0.1;
-    }
+    rebound_from_edges(point);
 }
 
 
 void 
-move(void)
+move(Point particles[], unsigned particle_count)
 {
-    const float req_frame_time = 1.0f / 60.0f;
+    const float req_frame_time = 1.0f / 40.0f;
     struct timespec start, end;
     float elapsed_time, sleep_time;
 
@@ -82,7 +76,8 @@ move(void)
         clock_gettime(CLOCK_MONOTONIC, &start);
 
         write(STDOUT_FILENO, "\x1b[2J", 4);
-        for(int i = 0; i < SIZE; i++) {
+
+        for(size_t i = 0; i < particle_count; i++) {
             particles[i].velocity.x += particles[i].accelaration.x;
             particles[i].velocity.y += particles[i].accelaration.y;
 
@@ -90,14 +85,13 @@ move(void)
             particles[i].position.y += particles[i].velocity.y;
 
             draw(&particles[i]);
-
-            
         }
+
         clock_gettime(CLOCK_MONOTONIC, &end);
 
         elapsed_time = (end.tv_nsec - start.tv_nsec) / (1.0e9);
 
-        sleep_time = req_frame_time - elapsed_time;
+        sleep_time   = req_frame_time - elapsed_time;
 
         if(sleep_time > 0) {
             struct timespec ts = {0, sleep_time * (1.0e9)};

@@ -1,3 +1,7 @@
+#ifndef PHYSICS_H   /* header guard */
+#define PHYSICS_H
+
+
 typedef struct {
     float x;
     float y;
@@ -15,3 +19,7 @@ typedef struct {
 
 
 void apply_force(Point *point, Vector2 force);
+void rebound_from_edges(Point *point);
+
+
+#endif
