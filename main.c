@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <time.h>
 #include "basic.h"
+#include "physics.h"
 
 
 /*
@@ -23,26 +23,8 @@
 #define OBJECT        "O"
 
 
-typedef struct {
-    float x;
-    float y;
-} Vector2;
-
-typedef float Some_mass_unit_idk;
-
-typedef struct {
-
-    Some_mass_unit_idk mass;
-    Vector2            position;
-    Vector2            velocity;
-    Vector2            accelaration;
-    char               symbol[8];
-} Point;
-
-
 void draw(Point *point);
 void move(Point *point);
-void apply_force(Point *point, Vector2 force);
 
 
 int
@@ -95,14 +77,4 @@ move(Point *point)
 
         nanosleep(&ts, n);
     }
-}
-
-
-void
-apply_force(Point *point, Vector2 force)
-{
-    point->accelaration.x = (force.x / point->mass);
-    point->accelaration.y = (force.y / point->mass);
-
-    move(point);
 }
