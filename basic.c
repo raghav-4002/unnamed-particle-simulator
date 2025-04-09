@@ -6,11 +6,7 @@
 #include <stdio.h>
 
 
-struct {
-    struct termios orig_termios;
-    int            screen_length;
-    int            screen_width;
-} term_attributes;
+Attributes term_attributes;
 
 
 void
