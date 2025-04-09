@@ -1,55 +1,55 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+
 #include "basic.h"
 #include "physics.h"
 
 
-/*
- * for smoother experience only use values of velocity from 0 to 3
- * And the values of accelaration from 0 to 1 (floats are ok)
- */
-#define X_VELOCITY     0
-#define Y_VELOCITY     0
+#define SIZE 1000
 
-#define X_ACCELARATION 0
-#define Y_ACCELARATION 0
-
-#define MASS           2.5
-
-#define X_FORCE        0
-#define Y_FORCE        0
-
-#define OBJECT        "O"
+Point particles[SIZE];
 
 
 void draw(Point *point);
-void move(Point *point);
+void move(void);
+void set_values(void);
 
 
 int
 main(void)
 {
+    srand(time(NULL));
     initialize();
 
-    Point point = {MASS,
-    {0, 0},
-    {X_VELOCITY, Y_VELOCITY},
-    {X_ACCELARATION, Y_ACCELARATION}, 
-    OBJECT};
+    set_values();
 
-    Vector2 force = {0.1, 0};
-
-    apply_force(&point, force);
+    move();    
 
     return 0;
 }
 
 
 void
+set_values(void)
+{
+    for(int i = 0; i < SIZE; i++) {
+        particles[i].position.x = (rand() % term_attributes.screen_width) + 1;
+        particles[i].position.y = (rand() % term_attributes.screen_length) + 1;
+
+        particles[i].velocity.x = 0;
+        particles[i].velocity.y = 0;
+
+        particles[i].accelaration.y = (((float)rand()) / RAND_MAX);
+        particles[i].accelaration.x = (((float)rand()) / RAND_MAX);
+    }
+}
+
+
+void
 draw(Point *point)
 {
-    write(STDOUT_FILENO, "\x1b[2J", 4);
     char buf[32];
     int  len;
 
@@ -57,23 +57,27 @@ draw(Point *point)
 
     write(STDOUT_FILENO, buf, len);
 
-    write(STDOUT_FILENO, point->symbol, sizeof(point->symbol));
+    write(STDOUT_FILENO, "O", 1);
 }
 
 
 void 
-move(Point *point)
+move(void)
 {
     struct timespec  ts = {0, 63000000};
     struct timespec *n = NULL;
 
     while(1) {
-        point->velocity.x += point->accelaration.x;
-        point->velocity.y += point->accelaration.y;
-        point->position.x += point->velocity.x;
-        point->position.y += point->velocity.y;
+        write(STDOUT_FILENO, "\x1b[2J", 4);
+        for(int i = 0; i < SIZE; i++) {
+            particles[i].velocity.x += particles[i].accelaration.x;
+            particles[i].velocity.y += particles[i].accelaration.y;
 
-        draw(point);
+            particles[i].position.x += particles[i].velocity.x;
+            particles[i].position.y += particles[i].velocity.y;
+
+            draw(&particles[i]);
+        }
 
         nanosleep(&ts, n);
     }

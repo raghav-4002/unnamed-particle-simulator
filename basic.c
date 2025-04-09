@@ -66,6 +66,8 @@ initialize(void)
     enable_raw_mode();
     get_window_size();
 
+    write(STDOUT_FILENO, "\x1b[2J", 4);
+
     /* hide cursor */
     write(STDOUT_FILENO, "\x1b[?25l", 6);
 }
