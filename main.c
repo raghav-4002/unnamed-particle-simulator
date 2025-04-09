@@ -7,7 +7,7 @@
 #include "physics.h"
 
 
-#define SIZE 1000
+#define SIZE 50
 
 Point particles[SIZE];
 
@@ -57,7 +57,17 @@ draw(Point *point)
 
     write(STDOUT_FILENO, buf, len);
 
-    write(STDOUT_FILENO, "O", 1);
+    write(STDOUT_FILENO, "*", 1);
+
+    if(point->position.x >= term_attributes.screen_width || point->position.x <= 0) {
+        point->velocity.x *= -1;
+        point->accelaration.x *= -0.1;
+    }
+
+    if(point->position.y >= term_attributes.screen_length || point->position.y <= 0) {
+        point->velocity.y *= -1;
+        point->accelaration.y *= -0.1;
+    }
 }
 
 
