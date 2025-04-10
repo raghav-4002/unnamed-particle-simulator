@@ -23,3 +23,14 @@ rebound_from_edges(Point *point)
         point->velocity.y     *= -1;
     }
 }
+
+
+void
+update_parameters(Point *point)
+{
+    point->velocity.x += point->accelaration.x;
+    point->velocity.y += point->accelaration.y;
+
+    point->position.x += point->velocity.x;
+    point->position.y += point->velocity.y;
+}

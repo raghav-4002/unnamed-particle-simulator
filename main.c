@@ -77,12 +77,8 @@ move(Point particles[], unsigned particle_count)
 
         write(STDOUT_FILENO, "\x1b[2J", 4);
 
-        for(size_t i = 0; i < particle_count; i++) {
-            particles[i].velocity.x += particles[i].accelaration.x;
-            particles[i].velocity.y += particles[i].accelaration.y;
-
-            particles[i].position.x += particles[i].velocity.x;
-            particles[i].position.y += particles[i].velocity.y;
+        for(unsigned i = 0; i < particle_count; i++) {
+            update_parameters(&particles[i]);
 
             draw(&particles[i]);
         }
