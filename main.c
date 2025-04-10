@@ -40,8 +40,8 @@ set_values(Point particles[], unsigned particle_count)
         particles[i].position.x    = (rand() % term_attributes.screen_width) + 1;
         particles[i].position.y    = (rand() % term_attributes.screen_length) + 1;
 
-        particles[i].velocity.x    = (rand() % 2) + 1;
-        particles[i].velocity.y    = (rand() % 2) + 1;
+        particles[i].velocity.x    = (rand() % 5) - 2;
+        particles[i].velocity.y    = (rand() % 5) - 2;
 
         particles[i].accelaration.y = 0.00;
         particles[i].accelaration.x = 0.00;
