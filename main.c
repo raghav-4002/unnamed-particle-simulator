@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#include "basic.h"
+#include "setup.h"
 #include "physics.h"
 
 
