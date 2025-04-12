@@ -21,6 +21,6 @@ typedef struct {
 void apply_force(Point *point, Vector2 force);
 void rebound_from_edges(Point *point);
 void update_parameters(Point *point);
-
+void detect_collision(Point particles[], unsigned particle_count);
 
 #endif
