@@ -7,8 +7,7 @@
 #include "physics.h"
 
 
-// void draw(Point *point);
-void move(Point particles[], unsigned size);
+void move(Point particles[], unsigned particle_count);
 void set_values(Point particles[], unsigned size);
 
 
@@ -61,7 +60,7 @@ move(Point particles[], unsigned particle_count)
         clock_gettime(CLOCK_MONOTONIC, &start);
         write(STDOUT_FILENO, "\x1b[2J", 4);     /* clear the screen */
 
-        detect_collision(particles, particle_count);
+        update_parameters(particles, particle_count);
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         elapsed_time = (end.tv_nsec - start.tv_nsec) / (1.0e9);     /* get the actual time required to draw a frame */
