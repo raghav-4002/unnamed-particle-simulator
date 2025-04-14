@@ -4,7 +4,7 @@
 
 #include "physics.h"
 
-void draw(Point *point);
+void draw_particle(Point *point);
 
 
 #endif

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
+#include <time.h>
 
 
 Attributes term_attributes;
@@ -69,6 +70,7 @@ get_window_size(void)
 void
 initialize(void)
 {
+    srand(time(NULL));  /* seed the random number generator */
     enable_raw_mode();
     get_window_size();
 

@@ -5,7 +5,7 @@
 
 
 void
-draw(Point *point)
+draw_particle(Point *point)
 {
     char buf[32];
     int  len;
@@ -16,5 +16,5 @@ draw(Point *point)
     write(STDOUT_FILENO, buf, len);
 
     /* draw the particle at the new cursor position */
-    write(STDOUT_FILENO, "0", 1);
+    write(STDOUT_FILENO, "O", 1);
 }
