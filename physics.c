@@ -26,7 +26,7 @@ rebound_from_edges(Point *point)
 
 
 void
-handle_particles(Point particles[], unsigned particle_count)
+handle_and_draw_particles(Point particles[], unsigned particle_count)
 {
     for(unsigned i = 0; i < particle_count; i++) {
         draw_particle(&particles[i]);

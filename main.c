@@ -17,7 +17,7 @@ void set_parameters(Point particles[], unsigned size);
 int
 main(int argc, char *argv[])
 {
-    if(argc == 1) {
+    if(argc != 2) {
         printf("Usage: %s <number-of-particles>\n", argv[0]);
         exit(1);
     }
@@ -34,20 +34,6 @@ main(int argc, char *argv[])
 }
 
 
-void
-set_parameters(Point particles[], unsigned particle_count)
-{
-    for(unsigned i = 0; i < particle_count; i++) {
-        particles[i].position.x    = (rand() % term_attributes.screen_width) + 1;
-        particles[i].position.y    = (rand() % term_attributes.screen_length) + 1;
-
-        particles[i].velocity.x    = (rand() % 5) - 2;
-        particles[i].velocity.y    = (rand() % 5) - 2;
-    }
-}
-
-
-
 void 
 draw_frame(Point particles[], unsigned particle_count)
 {
@@ -59,7 +45,7 @@ draw_frame(Point particles[], unsigned particle_count)
         clock_gettime(CLOCK_MONOTONIC, &start);
         write(STDOUT_FILENO, "\x1b[2J", 4);     /* clear the screen */
 
-        handle_particles(particles, particle_count);
+        handle_and_draw_particles(particles, particle_count);
 
         clock_gettime(CLOCK_MONOTONIC, &end);
         elapsed_time = (end.tv_nsec - start.tv_nsec) / (1.0e9);     /* get the actual time required to draw a frame */
@@ -70,5 +56,18 @@ draw_frame(Point particles[], unsigned particle_count)
             struct timespec ts = {0, sleep_time * (1.0e9)};
             nanosleep(&ts, NULL);
         }
+    }
+}
+
+
+void
+set_parameters(Point particles[], unsigned particle_count)
+{
+    for(unsigned i = 0; i < particle_count; i++) {
+        particles[i].position.x    = (rand() % term_attributes.screen_width) + 1;
+        particles[i].position.y    = (rand() % term_attributes.screen_length) + 1;
+
+        particles[i].velocity.x    = (rand() % 5) - 2;
+        particles[i].velocity.y    = (rand() % 5) - 2;
     }
 }
