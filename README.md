@@ -7,6 +7,7 @@ Runs entirely in the commandline.
 # Limitations
 - Currently only works on Linux, Mac and other POSIX compliant operating systems. Thus Windows is not supported.
 - Doesn't have collision among particles yet.
+- Doesn't handle input of an invalid argument yet.
 - Doesn't have a dedicated 'quit' command yet. You have to manually kill the terminal session to exit.
 - Due to the limitations of rendering objects in a terminal, the velocities of particles are prefixed integral values.
 
