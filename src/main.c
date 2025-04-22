@@ -67,7 +67,7 @@ set_parameters(Point particles[], unsigned particle_count)
         particles[i].position.x    = (rand() % term_attributes.screen_width) + 1;
         particles[i].position.y    = (rand() % term_attributes.screen_length) + 1;
 
-        particles[i].velocity.x    = (rand() % 5) - 2;
-        particles[i].velocity.y    = (rand() % 5) - 2;
+        particles[i].current_velocity.x    = (rand() % 5) - 2;
+        particles[i].current_velocity.y    = (rand() % 5) - 2;
     }
 }

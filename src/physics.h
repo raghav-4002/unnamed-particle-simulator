@@ -10,8 +10,9 @@ typedef struct {
 
 typedef struct {
     Vector2 position;
-    Vector2 velocity;
-    Vector2 accelaration;
+    Vector2 current_velocity;
+    Vector2 prev_velocity;
+    
     char symbol[3];
 } Point;
 
