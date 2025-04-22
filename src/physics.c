@@ -40,6 +40,14 @@ rebound_from_edges(Point *point)
 
 
 void
+handle_collision(struct collision_queue *front)
+{
+    // do something
+}
+
+
+
+void
 enqueue(Point particle1, Point particle2)
 {
     struct collision_queue *new = malloc(sizeof(*new));
@@ -59,9 +67,17 @@ enqueue(Point particle1, Point particle2)
 
 
 void
-handle_collision(Point particle1, Point particle2)
+dequeue(void)
 {
-    // do something
+    handle_collision(front);
+
+    struct collision_queue *ptr = front;
+    front = front->next;
+    if(front == NULL) {
+        rear = NULL;
+    }
+
+    free(ptr);
 }
 
 
@@ -69,6 +85,10 @@ void
 handle_and_draw_particles(Point particle[], unsigned particle_count)
 {
     unsigned i, j;
+
+    while(front != NULL) {
+        dequeue();
+    }
 
     for(i = 0; i < particle_count; i++) {
         draw_particle(&particle[i]);
@@ -82,6 +102,11 @@ handle_and_draw_particles(Point particle[], unsigned particle_count)
                particle[i].position.y == particle[j].position.y) {
                 enqueue(particle[i], particle[j]);
             }
+            particle[j].prev_velocity.x = particle[j].current_velocity.x;
+            particle[j].prev_velocity.y = particle[j].current_velocity.y;
         }
+
+        particle[i].prev_velocity.x = particle[i].current_velocity.x;
+        particle[i].prev_velocity.y = particle[i].current_velocity.y;
     }
 }
