@@ -1,10 +1,23 @@
-#include "setup.h"
+/*
+ * This file consists of functions that setup the basics required to run the program.
+ 
+ * Firstly it enables raw mode (or non-canonical mode), which gives more fine grained control
+   over the terminal settings.
+
+ * It also detects the size of terminal window using the ioctl (input-output control) syscall.
+   Window size is required to place the particles and detect collision with the walls.
+
+ */
+
+
 #include <termios.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <time.h>
+
+#include "setup.h"
 
 
 Attributes term_attributes;
@@ -13,6 +26,7 @@ Attributes term_attributes;
 void
 kill(const char *message)
 {
+    /* error handling */
     perror(message);
 
     exit(1);
@@ -21,7 +35,7 @@ kill(const char *message)
 void
 disable_raw_mode(void)
 {
-    /* during exit, restore the original terminal attributes */
+    /* at exit, restore the original terminal attributes */
     if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &term_attributes.orig_termios) == -1)
         kill("tcsetattr");
 

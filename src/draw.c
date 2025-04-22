@@ -10,7 +10,7 @@ draw_particle(Point *point)
     char buf[32];
     int  len;
 
-    /* set cursor to new position */
+    /* set cursor to the new position */
     len = snprintf(buf, sizeof(buf), "\x1b[%d;%dH", 
             (int)point->position.y, (int)point->position.x);
     write(STDOUT_FILENO, buf, len);

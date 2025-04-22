@@ -1,3 +1,9 @@
+/*
+ * Consists of functions and datatypes that are relevant for mimicking physical behaviour
+   including velocity updation, position updation, rebounding from edges, collision among particles
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,7 +17,6 @@ struct collision_queue{
     Point particle2;
     struct collision_queue *next;
 };
-
 
 struct collision_queue *front = NULL;
 struct collision_queue *rear = NULL;
@@ -42,7 +47,7 @@ rebound_from_edges(Point *point)
 void
 handle_collision(struct collision_queue *front)
 {
-    // do something
+    /* need to work on collision yet */
 }
 
 
@@ -84,11 +89,11 @@ dequeue(void)
 void
 handle_and_draw_particles(Point particle[], unsigned particle_count)
 {
-    unsigned i, j;
-
     while(front != NULL) {
         dequeue();
     }
+
+    unsigned i, j;
 
     for(i = 0; i < particle_count; i++) {
         draw_particle(&particle[i]);
@@ -96,12 +101,16 @@ handle_and_draw_particles(Point particle[], unsigned particle_count)
         update_position(&particle[i]);
     }       
 
+    /* loops to check for collision */
     for(i = 0; i < particle_count - 1; i++) {
         for(j = i + 1; j < particle_count; j++) {
+
+            /* if particles are at the same point => collision */
             if(particle[i].position.x == particle[j].position.x && 
                particle[i].position.y == particle[j].position.y) {
                 enqueue(particle[i], particle[j]);
             }
+
             particle[j].prev_velocity.x = particle[j].current_velocity.x;
             particle[j].prev_velocity.y = particle[j].current_velocity.y;
         }

@@ -23,9 +23,11 @@ main(int argc, char *argv[])
     }
 
     unsigned particle_count = atol(argv[1]);
+
+    /* create an array of particles */
     particle = malloc(sizeof(*particle) * particle_count);
 
-    initialize();
+    initialize(); /* basic setup */
 
     set_parameters(particle, particle_count);
     draw_frame(particle, particle_count);    
@@ -63,10 +65,12 @@ draw_frame(Point particle[], unsigned particle_count)
 void
 set_parameters(Point particle[], unsigned particle_count)
 {
+    /* set random values of velocity and position of particles */
     for(unsigned i = 0; i < particle_count; i++) {
         particle[i].position.x    = (rand() % term_attributes.screen_width) + 1;
         particle[i].position.y    = (rand() % term_attributes.screen_length) + 1;
 
+        /* both x and y velocities can only be {-2, -1, 0, 1, 2}*/
         particle[i].current_velocity.x    = (rand() % 5) - 2;
         particle[i].current_velocity.y    = (rand() % 5) - 2;
     }
