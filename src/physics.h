@@ -17,7 +17,7 @@ typedef struct {
 } Point;
 
 
-void handle_and_draw_particles(Point particles[], unsigned size);
+void handle_and_draw_particles(Point particle[], unsigned size);
 
 
 #endif

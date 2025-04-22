@@ -1,6 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "physics.h"
 #include "draw.h"
 #include "setup.h"
+
+
+struct collision_queue{
+    Point particle1;
+    Point particle2;
+    struct collision_queue *next;
+};
+
+
+struct collision_queue *front = NULL;
+struct collision_queue *rear = NULL;
 
 
 void
@@ -26,6 +40,25 @@ rebound_from_edges(Point *point)
 
 
 void
+enqueue(Point particle1, Point particle2)
+{
+    struct collision_queue *new = malloc(sizeof(*new));
+    new->next = NULL;
+
+    if(front == NULL && rear == NULL) {
+        front = new;
+        rear = new;
+    } else {
+        rear->next = new;
+        rear = rear->next;
+    }
+
+    rear->particle1 = particle1;
+    rear->particle2 = particle2;
+}
+
+
+void
 handle_collision(Point particle1, Point particle2)
 {
     // do something
@@ -33,21 +66,21 @@ handle_collision(Point particle1, Point particle2)
 
 
 void
-handle_and_draw_particles(Point particles[], unsigned particle_count)
+handle_and_draw_particles(Point particle[], unsigned particle_count)
 {
     unsigned i, j;
 
     for(i = 0; i < particle_count; i++) {
-        draw_particle(&particles[i]);
-        rebound_from_edges(&particles[i]);
-        update_position(&particles[i]);
+        draw_particle(&particle[i]);
+        rebound_from_edges(&particle[i]);
+        update_position(&particle[i]);
     }       
 
     for(i = 0; i < particle_count - 1; i++) {
         for(j = i + 1; j < particle_count; j++) {
-            if(particles[i].position.x == particles[j].position.x && 
-               particles[i].position.y == particles[j].position.y) {
-                handle_collision(particles[i], particles[j]);
+            if(particle[i].position.x == particle[j].position.x && 
+               particle[i].position.y == particle[j].position.y) {
+                enqueue(particle[i], particle[j]);
             }
         }
     }
